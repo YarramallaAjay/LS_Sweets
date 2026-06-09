@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Orders</title>
+    <style>
+    	.status-badge {
+    	padding: 4px 10px;
+   		border-radius: 12px;
+    	color: white;
+    	font-size: 13px;}
+
+		.status-NEW { background: gray; }
+		.status-PLACED { background: blue; }
+		.status-CONFIRMED { background: green; }
+		.status-PREPARING { background: orange; }
+		.status-SHIPPED { background: purple; }
+		.status-DELIVERED { background: darkgreen; }
+		.status-CANCELLED { background: red; }	
+		.filter-form {
+    margin-bottom: 15px;
+}
+
+	.status-dropdown {
+    width: 200px;
+    padding: 8px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000 !important;
+    background: #fff !important;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    appearance: auto !important;
+    -webkit-appearance: menulist !important;
+    -moz-appearance: menulist !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative;
+    z-index: 999;
+}
+
+.status-dropdown option {
+    color: #000 !important;
+    background: #fff !important;
+}
+		
+    </style>
+</head>
+<body>
+
+<h2>📦 Orders List</h2>
+
+<form method="get" th:action="@{/admin/orders/filter}" class="filter-form">
+
+    <label>Status:</label>
+
+    <select name="status">
+        <option value="">All</option>
+
+        <option th:each="s : ${statuses}"
+                th:value="${s}"
+                th:text="${s}">
+        </option>
+    </select>
+
+    <button type="submit">Filter</button>
+
+</form>
+
+
+
+
+<table border="1">
+    <tr>
+        <th>Order ID</th>
+        <th>Customer</th>
+        <th>Phone</th>
+        <th>Total</th>
+        <th>Date</th>
+        <th>View</th>
+        <th>Status</th>
+    </tr>
+
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.customer?.name} ?: 'N/A'"></td>
+        <td th:text="${order.customer?.phone} ?: 'N/A'"></td>
+        <td>₹<span th:text="${order.totalAmount}"></span></td>
+        <td th:text="${order.orderDate}"></td>
+        <td>
+            <a th:href="@{/admin/orders/{id}(id=${order.id})}">View</a>
+        </td>
+       	<td>
+   			<span class="status-badge" 	th:text="${order.status}"
+         		  th:classappend="'status-' + ${order.status}">
+   			</span>
+		</td>
+        <td>
+        	<form th:action="@{/admin/orders/{id}/status(id=${order.id})}"method="post">
+			<input type="hidden"
+       				th:name="${_csrf?.parameterName}"
+       				th:value="${_csrf?.token}">			
+       				
+    		<select name="status" class="status-dropdown">
+    
+    			<option th:value="${order.status}"
+            			th:text="${order.status}"
+            			selected>
+    			</option>
+
+    			<th:block th:if="${allowedStatuses != null and allowedStatuses[order.id] != null}">
+        			<option th:each="nextStatus : ${allowedStatuses[order.id]}"
+                			th:value="${nextStatus}"
+                			th:text="${nextStatus}">
+        			</option>
+    			</th:block>
+
+			</select>
+
+    		<button type="submit">Update</button>
+			</form>
+        </td>
+    </tr>
+
+</table>
+
+</body>
+</html>

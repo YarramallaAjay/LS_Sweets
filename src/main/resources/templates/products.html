@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lalitha Surya Sweets</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<h1>🍬 Lalitha Surya Sweets</h1>
+
+<div th:each="product : ${products}" class="product">
+
+    <h3 th:text="${product.name}"></h3>
+
+    <!-- PRICE OPTIONS -->
+    <form th:action="@{/cart/add}" method="post">
+
+        <input type="hidden" name="productId" th:value="${product.id}"/>
+
+        <div th:each="price : ${product.prices}">
+            <label>
+                <input type="radio"
+                       name="priceId"
+                       th:value="${price.id}"
+                       required>
+                <span th:text="${price.label}"></span> –
+                ₹<span th:text="${price.price}"></span>
+            </label><br>
+        </div>
+
+        <label>Qty:</label>
+        <input type="number" name="quantity" value="1" min="1" required>
+
+        <br><br>
+        <button type="submit">Add to Cart</button>
+
+    </form>
+
+    <hr>
+</div>
+
+
+</body>
+</html>

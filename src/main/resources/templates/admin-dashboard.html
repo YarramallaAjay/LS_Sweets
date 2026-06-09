@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+.grid{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:20px;
+}
+
+.card{
+ background:white;
+ padding:20px;
+ border-radius:12px;
+ box-shadow:0 4px 10px rgba(0,0,0,.1);
+ text-align:center;
+}
+
+.card h2{font-size:32px;color:#16a34a;}
+</style>
+</head>
+
+<body>
+
+<h1>📊 Admin Dashboard</h1>
+
+<div class="grid">
+
+<div class="card">
+<h3>Total Orders</h3>
+<h2 th:text="${totalOrders}"></h2>
+</div>
+
+<div class="card">
+<h3>Total Revenue</h3>
+<h2>₹<span th:text="${totalRevenue}"></span></h2>
+</div>
+
+<div class="card">
+<h3>Pending Orders</h3>
+<h2 th:text="${pendingOrders}"></h2>
+</div>
+
+<div class="card">
+<h3>Today's Orders</h3>
+<h2 th:text="${todayOrders}"></h2>
+</div>
+
+</div>
+
+<hr>
+
+<h2>📈 Monthly Orders</h2>
+
+<canvas id="ordersChart"></canvas>
+
+<script th:inline="javascript">
+
+const data = [[${monthlyOrders}]];
+
+const labels = data.map(r => "Month " + r[0]);
+const values = data.map(r => r[1]);
+
+new Chart(document.getElementById("ordersChart"),{
+ type:'line',
+ data:{
+   labels:labels,
+   datasets:[{
+     label:'Orders',
+     data:values,
+     borderWidth:3
+   }]
+ }
+});
+
+</script>
+
+</body>
+</html>

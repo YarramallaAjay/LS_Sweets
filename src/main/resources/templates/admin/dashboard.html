@@ -1,0 +1,99 @@
+<div th:fragment="content">
+
+<h2>Dashboard</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>Total Orders</h3>
+<h2 th:text="${totalOrders}"></h2>
+</div>
+
+<div class="card">
+<h3>Total Revenue</h3>
+<h2>₹<span th:text="${totalRevenue}"></span></h2>
+</div>
+
+<div class="card">
+<h3>Pending Orders</h3>
+<h2 th:text="${pendingOrders}"></h2>
+</div>
+
+<div class="card">
+<h3>Today's Orders</h3>
+<h2 th:text="${todayOrders}"></h2>
+</div>
+
+
+<div class="card">
+<h3>Today's Revenue</h3>
+<h2 th:text="${todayRevenue}"></h2>
+</div>
+
+
+</div>
+
+
+<hr>
+
+<h2>🔥 Top Selling Products</h2>
+
+<table class="table table-striped">
+
+<thead>
+<tr>
+<th>Product</th>
+<th>Total Sold</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr th:each="p : ${topProducts}">
+<td th:text="${p[0]}"></td>
+<td th:text="${p[1]}"></td>
+</tr>
+
+</tbody>
+
+</table>
+
+
+<hr>
+
+<h2>📈 Monthly Orders</h2>
+
+<canvas id="ordersChart"></canvas>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+
+let monthlyOrders = [[${monthlyOrders}]];
+
+const ctx = document.getElementById('ordersChart');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        datasets: [{
+            label: 'Orders',
+            data: monthlyOrders,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive:true,
+        scales:{
+            y:{
+                beginAtZero:true
+            }
+        }
+    }
+});
+
+</script>
+
+</div>

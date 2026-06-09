@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Complete Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+<h2>Redirecting to Payment...</h2>
+
+
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    var options = {
+        key: /*[[${key}]]*/ "",
+        amount: /*[[${amount}]]*/ 0,
+        currency: "INR",
+        name: "Lalitha Surya Sweets",
+        description: "Order Payment",
+        order_id: /*[[${razorpayOrderId}]]*/ "",
+
+        handler: function (response) {
+            window.location.href =
+                "/checkout/payment-success?paymentId=" + response.razorpay_payment_id
+                + "&razorpayOrderId=" + response.razorpay_order_id
+                + "&signature=" + response.razorpay_signature
+                + "&orderId=" + /*[[${orderId}]]*/ 0;
+        },
+
+        prefill: {
+            name: /*[[${customerName}]]*/ "",
+            email: /*[[${email}]]*/ "",
+            contact: /*[[${phone}]]*/ ""
+        },
+
+        theme: {
+            color: "#d32f2f"
+        },
+
+        modal: {
+            ondismiss: function () {
+                alert("Payment popup closed");
+            }
+        },
+        
+     	config: {
+    display: {
+        blocks: {
+            upi: {
+                name: "Pay using UPI",
+                instruments: [
+                    {
+                        method: "upi"
+                    }
+                ]
+            }
+        },
+        sequence: ["block.upi"],
+        preferences: {
+            show_default_blocks: true
+        }
+    }
+}
+    };
+
+    console.log("Razorpay Options:", options);
+
+    window.onload = function () {
+        var rzp1 = new Razorpay(options);
+
+        rzp1.on('payment.failed', function (response) {
+            console.log(response.error);
+            alert("Payment Failed: " + response.error.description);
+        });
+
+        rzp1.open();
+    };
+
+    /*]]>*/
+</script>
+
+</body>
+</html>

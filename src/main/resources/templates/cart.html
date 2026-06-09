@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <style>
+    body{
+    font-family: Arial, Helvetica, sans-serif;
+    background:#f7f7f7;
+    margin:0;
+}
+
+.cart-container{
+    display:flex;
+    gap:30px;
+    max-width:1200px;   /* 🔥 important */
+    margin:30px auto;   /* 🔥 center horizontally */
+    align-items:flex-start;
+}
+
+.cart-info {
+    flex: 1;
+}
+
+.cart-item {
+    display:flex;
+    gap:20px;
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.06);
+    align-items:center;
+    justify-content:flex-start; /* 🔥 fix alignment */
+    }
+    
+    .cart-items{
+    flex:2;  /* bigger area */
+}
+.cart-details{
+    flex:2;
+}
+
+.cart-qty{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.cart-img{
+    width:100px;
+    height:100px;
+    object-fit:cover;
+    border-radius:12px;
+}
+
+.cart-qty button{
+    width:34px;
+    height:34px;
+    border:none;
+    border-radius:8px;
+    background:#f1f1f1;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.cart-qty span{
+    min-width:20px;
+    text-align:center;
+}
+
+.cart-qty button:hover{
+    background:#e2e2e2;
+}
+
+.cart-summary{
+	flex:1;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    min-width:280px;
+    height:fit-content;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.checkout-btn{
+    display:block;
+    background:#d32f2f;
+    color:white;
+    padding:14px;
+    text-align:center;
+    border-radius:10px;
+    margin-top:20px;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+.checkout-btn:hover{
+    background:#b71c1c;
+}
+
+.c-btn{
+    display:block;
+    background:#f4b400;
+    color:white;
+    padding:12px;
+    text-align:center;
+    border-radius:10px;
+    margin-top:17px;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+.c-btn:hover{
+    background:#b71c1c;
+}
+
+
+.remove-btn{
+    background:#fff3f3;
+    color:#d32f2f;
+    border:none;
+    padding:6px 12px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.remove-btn:hover{
+    background:#ffe2e2;
+}
+
+
+.empty-cart{
+    text-align:center;
+    margin-top:100px;
+}
+
+.shop-btn{
+    display:inline-block;
+    margin-top:20px;
+    background:#d32f2f;
+    color:white;
+    padding:12px 30px;
+    border-radius:8px;
+    text-decoration:none;
+}
+
+.shop-btn:hover{
+    background:#b71c1c;
+}
+
+
+.cart-buttons{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+@media (max-width:768px){
+
+	.cart-container{
+		flex-direction:column;
+		padding:10px;
+	}
+
+	.cart-item{
+		flex-direction:column;
+		align-items: flex-start;
+	}
+
+	.cart-summary{
+		width:100%;
+	}
+
+	.cart-buttons{
+		display: flex;
+		flex-direction: column;
+		gap:10px;
+	}
+
+	.cart-buttons a, .cart-buttons button{
+		width: 100%;
+		text-align: center;	
+	}
+	.cart-img{
+		width: 100%;
+		height: auto;
+		max-height: 200px;
+	}
+	
+	.cart-info{
+		width: 100%;
+	}
+	
+	.cart-qty{
+		margin: 10px 0;
+	}
+}
+
+
+@media (min-width:768px){
+	.cart-summary{
+    	position: sticky;
+    	top: 20px;
+	}
+}
+
+</style>
+</head>
+<body>
+
+<h2 style="text-align:center; margin-top:20px;">🛒 Your Cart</h2>
+
+<!-- EMPTY CART -->
+<div th:if="${cart == null or #lists.isEmpty(cart.items)}" class="empty-cart">
+
+<h2>🛒 Your Cart is Empty</h2>
+
+<p>Looks like you haven't added any sweets yet.</p>
+
+<a href="/" class="shop-btn">Start Shopping</a>
+
+</div>
+
+<!-- CART TABLE -->
+<div th:if="${cart != null and !#lists.isEmpty(cart.items)}">
+
+<div class="cart-container">
+
+    <div class="cart-items">
+
+        <div th:each="item : ${cart.items}" class="cart-item">
+
+    <img th:src="@{${item.imageUrl}}" class="cart-img"/>
+
+    <div class="cart-info">
+
+        <h4 th:text="${item.productName}"></h4>
+
+        <p th:text="${item.priceLabel}"></p>
+
+        <p>₹ <span th:text="${item.price}"></span></p>
+
+        <div class="cart-qty">
+            <form th:action="@{/cart/update}" method="post">
+                <input type="hidden" name="productId" th:value="${item.productId}"/>
+                <input type="hidden" name="priceId" th:value="${item.priceId}"/>
+
+                <button type="submit" name="quantity"
+                        th:value="${item.quantity - 1}">-</button>
+
+                <span th:text="${item.quantity}"></span>
+
+                <button type="submit" name="quantity"
+                        th:value="${item.quantity + 1}">+</button>
+            </form>
+        </div>
+
+        <p class="subtotal">
+            Subtotal: ₹ <span th:text="${item.subtotal}"></span>
+        </p>
+
+        <form th:action="@{/cart/remove}" method="post">
+            <input type="hidden" name="productId" th:value="${item.productId}"/>
+            <input type="hidden" name="priceId" th:value="${item.priceId}"/>
+            <button class="remove-btn">Remove</button>
+        </form>
+
+    </div>
+
+</div>
+        
+    </div>
+
+    <div class="cart-summary">
+        <h4>Total</h4>
+        <h3>₹ <span th:text="${cart.total}"></span></h3>
+		
+		<a href="/checkout" class="checkout-btn">
+            Proceed to Checkout →
+        </a>
+		
+		<div class="cart-buttons">
+    		<a href="/" class="c-btn">⬅ Continue Shopping</a>
+    		<a href="/cart/clear" class="c-btn">🗑 Clear Cart</a>
+		</div>
+		
+    </div>
+
+</div>
+
+
+</div>
+
+</body>
+
+</html>
+
