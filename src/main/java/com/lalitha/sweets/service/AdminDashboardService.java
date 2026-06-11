@@ -1,5 +1,6 @@
 package com.lalitha.sweets.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class AdminDashboardService {
 	}
 	
 	
-	public Double getTotalRevenue() {
+	public BigDecimal getTotalRevenue() {
 		return orderRepository.totalRevenue();
 	}
 	
@@ -41,7 +42,7 @@ public class AdminDashboardService {
 		return orderRepository.monthlyOrders();
 	}
 	
-	public Double getTodayRevenue() {
+	public BigDecimal getTodayRevenue() {
 		return orderRepository.todayRevenue();
 	}
 	
