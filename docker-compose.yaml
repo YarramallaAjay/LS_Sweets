@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  app:
+    image: lalitha-sweets:latest
+    container_name: lalitha-sweets
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      DB_URL: jdbc:postgresql://ep-frosty-grass-ata0idrj.c-9.us-east-1.aws.neon.tech/neondb?sslmode=require
+      DB_USERNAME: neondb_owner
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+
+      WHATSAPP_ADMIN_NUMBER: ${WHATSAPP_ADMIN_NUMBER}
+
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET}
+
+    restart: unless-stopped
