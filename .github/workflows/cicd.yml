@@ -46,35 +46,16 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/lalitha-ecommerce:${{ github.sha }}
 
   deploy:
-    name: Deploy to AWS EC2
-    runs-on: ubuntu-latest
-    needs: build-and-push
-
+    name: Deploy via SSH
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1
+      - uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.AWS_HOST }}
           username: ${{ secrets.AWS_USER }}
           key: ${{ secrets.AWS_SSH_KEY }}
           script: |
-            # Pull latest image
             docker pull ${{ secrets.DOCKER_USERNAME }}/lalitha-ecommerce:latest
-
-            # Stop and remove existing container if running
             docker stop lalitha-ecommerce || true
             docker rm lalitha-ecommerce || true
-
-            # Run new container
-            docker run -d \
-              --name lalitha-ecommerce \
-              --restart unless-stopped \
-              -p 8080:8080 \
-              -e SPRING_DATASOURCE_URL=${{ secrets.DB_URL }} \
-              -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
-              -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              -e SPRING_PROFILES_ACTIVE=prod \
-              ${{ secrets.DOCKER_USERNAME }}/lalitha-ecommerce:latest
-
-            # Remove dangling images to free space
+            docker run -d --name lalitha-ecommerce --restart unless-stopped -p 8080:8080 -e SPRING_DATASOURCE_URL="${{ secrets.DB_URL }}" -e SPRING_DATASOURCE_USERNAME="${{ secrets.DB_USERNAME }}" -e SPRING_DATASOURCE_PASSWORD="${{ secrets.DB_PASSWORD }}" -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/lalitha-ecommerce:latest
             docker image prune -f
