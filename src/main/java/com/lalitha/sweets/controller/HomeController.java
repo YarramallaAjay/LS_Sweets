@@ -4,6 +4,7 @@ package com.lalitha.sweets.controller;
 
 
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,8 +88,15 @@ public class HomeController {
 
 	    return "category";
 	}
-	
-	
+
+	@GetMapping("/heat")
+	public ResponseEntity getHeat(Model model) {
+
+
+		return ResponseEntity.ok("test api");
+	}
+
+
 	@GetMapping("/hot")
 	public String hot(Model model) {
 		
