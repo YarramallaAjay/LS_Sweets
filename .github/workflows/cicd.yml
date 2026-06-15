@@ -61,5 +61,5 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/lalitha-ecommerce:latest
             docker stop lalitha-ecommerce || true
             docker rm lalitha-ecommerce || true
-            docker run -d --name lalitha-ecommerce --restart unless-stopped -p 8080:8080 -e SPRING_DATASOURCE_URL="${{ secrets.DB_URL }}" -e SPRING_DATASOURCE_USERNAME="${{ secrets.DB_USERNAME }}" -e SPRING_DATASOURCE_PASSWORD="${{ secrets.DB_PASSWORD }}" -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/lalitha-ecommerce:latest
+            docker run -d --name lalitha-ecommerce --restart unless-stopped -p 8080:8080 --env-file /home/ubuntu/.env ${{ secrets.DOCKER_USERNAME }}/lalitha-ecommerce:latest
             docker image prune -f
